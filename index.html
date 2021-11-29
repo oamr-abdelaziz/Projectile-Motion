@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <meta name="description" content="Projectile motion simulator task to nagwa company" />
+        <meta name="keywords" content="HTML, CSS, JavaScript">
+        <meta name="author" content="Omar Abdelaziz">
+        <title>Projectile Motion</title>
+        <style>
+            body {
+                font-family: "Open Sans", sans-serif;
+                font-weight: 300;
+                line-height: 1.42em;
+                color: #a7a1ae;
+                background-color: #1f2739;
+                display: flex;
+                flex-wrap: wrap;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* left half of page */
+            .main-container {
+                width: 30%;
+                height: 99.5%;
+            }
+
+            .mainContent {
+                margin: 5px;
+            }
+
+            h1 {
+                font-size: 3em;
+                font-weight: 300;
+                line-height: 1em;
+                text-align: center;
+                color: #4dc3fa;
+            }
+
+            h2 {
+                font-size: 1em;
+                font-weight: 300;
+                text-align: center;
+                display: block;
+                line-height: 1em;
+                color: #fb667a;
+            }
+
+            .container {
+                text-align: center;
+                overflow: hidden;
+                width: 80%;
+                margin: 0 auto;
+                display: table;
+                padding: 0 0 2em 0;
+            }
+
+            /* table */
+            .container th h1 {
+                font-weight: bold;
+                font-size: 1em;
+                text-align: center;
+                color: #185875;
+            }
+
+            .container td {
+                font-weight: normal;
+                font-size: 1em;
+                -webkit-box-shadow: 0 2px 2px -2px #0e1119;
+                -moz-box-shadow: 0 2px 2px -2px #0e1119;
+                box-shadow: 0 2px 2px -2px #0e1119;
+            }
+
+            .container td,
+            .container th {
+                padding-bottom: 2%;
+                padding-top: 2%;
+                padding-left: 2%;
+            }
+
+            .container tr:nth-child(odd) {
+                background-color: #323c50;
+            }
+
+            .container tr:nth-child(even) {
+                background-color: #2c3446;
+            }
+
+            .container th {
+                background-color: #1f2739;
+            }
+
+            .container td:first-child {
+                color: #fb667a;
+            }
+
+            .container tr:hover {
+                background-color: #464a52;
+                -webkit-box-shadow: 0 6px 6px -6px #0e1119;
+                -moz-box-shadow: 0 6px 6px -6px #0e1119;
+                box-shadow: 0 6px 6px -6px #0e1119;
+            }
+
+            .container td:hover {
+                background-color: #fff842;
+                color: #403e10;
+                font-weight: bold;
+
+                box-shadow: #7f7c21 -1px 1px, #7f7c21 -2px 2px, #7f7c21 -3px 3px,
+                    #7f7c21 -4px 4px, #7f7c21 -5px 5px, #7f7c21 -6px 6px;
+                transform: translate3d(6px, -6px, 0);
+
+                transition-delay: 0s;
+                transition-duration: 0.4s;
+                transition-property: all;
+                transition-timing-function: line;
+            }
+
+            /* input fields */
+            .input-fields {
+                margin-bottom: 1em;
+                display: flex;
+            }
+
+            .form__group {
+                display: inline-block;
+                position: relative;
+                padding: 15px 0 0;
+                margin-top: 10px;
+                width: 45%;
+                margin-right: 3%;
+            }
+
+            .form__field {
+                font-family: inherit;
+                width: 100%;
+                border: 0;
+                border-bottom: 2px solid #9b9b9b;
+                outline: 0;
+                font-size: 1.3rem;
+                color: white;
+                padding: 7px 0;
+                background: transparent;
+                transition: border-color 0.2s;
+            }
+
+            .form__field::placeholder {
+                color: transparent;
+            }
+
+            .form__field:placeholder-shown~.form__label {
+                font-size: 1.3rem;
+                cursor: text;
+                top: 20px;
+            }
+
+            .form__label {
+                position: absolute;
+                top: 0;
+                display: block;
+                transition: 0.2s;
+                font-size: 1rem;
+                color: #9b9b9b;
+            }
+
+            .form__field:focus~.form__label {
+                position: absolute;
+                top: 0;
+                display: block;
+                transition: 0.2s;
+                font-size: 1rem;
+                color: #4dc3fa;
+                font-weight: 700;
+            }
+
+            .form__field:focus {
+                padding-bottom: 6px;
+                font-weight: 700;
+                border-width: 3px;
+                border-image: linear-gradient(to right, #4dc3fa, #26b6f8);
+                border-image-slice: 1;
+            }
+
+            /* reset input */
+            .form__field:required,
+            .form__field:invalid {
+                box-shadow: none;
+            }
+
+            .form__field:invalid {
+                border-bottom: 2px solid red;
+            }
+
+            .error-input {
+                padding-left: 3px;
+                visibility: hidden;
+                margin: 0;
+                text-align: left;
+                color: red;
+                font-size: 0.8rem;
+            }
+
+            .form__field:invalid~.error-input {
+                visibility: visible;
+            }
+
+
+            /* Buttons */
+            .button {
+                background: linear-gradient(to bottom right, #ef4765, #ff9a5a);
+                border: 0;
+                border-radius: 12px;
+                color: #ffffff;
+                cursor: pointer;
+                display: inline-block;
+                font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial,
+                    sans-serif;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 2.5;
+                outline: transparent;
+                padding: 0 1rem;
+                text-align: center;
+                text-decoration: none;
+                transition: box-shadow 0.2s ease-in-out;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+                white-space: nowrap;
+                margin: 2px;
+            }
+
+            .button:disabled {
+                background: grey;
+                cursor: default;
+            }
+
+            .button:not([disabled]):focus {
+                box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.5),
+                    -0.125rem -0.125rem 1rem rgba(239, 71, 101, 0.5),
+                    0.125rem 0.125rem 1rem rgba(255, 154, 90, 0.5);
+            }
+
+            .button:not([disabled]):hover {
+                box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.5),
+                    -0.125rem -0.125rem 1rem rgba(239, 71, 101, 0.5),
+                    0.125rem 0.125rem 1rem rgba(255, 154, 90, 0.5);
+            }
+
+
+            /* right half of page */
+            .container2 {
+                text-align: left;
+                width: 70%;
+                height: 99.5%;
+            }
+
+            /* canvas */
+            #canvas {
+                background-color: transparent;
+                position: absolute;
+                z-index: 200;
+            }
+
+            #canvas2 {
+                background-color: transparent;
+                position: absolute;
+                z-index: 100;
+            }
+
+            #canvas3 {
+                background-color: white;
+                position: absolute;
+                z-index: 0;
+            }
+
+            #canvas4 {
+                background-color: transparent;
+                position: absolute;
+                z-index: 110;
+            }
+
+            #canvas5 {
+                background-color: transparent;
+                position: absolute;
+                z-index: 110;
+            }
+
+            /* Responsive */
+            @media (max-width: 1024px) {
+                .main-container {
+                    width: 100%;
+                }
+
+                .container2 {
+                    width: 100%;
+                }
+            }
+
+            @media (min-width: 1370px) {
+                html {
+                    height: 100%;
+                }
+
+                .mainContent {
+                    height: 100%;
+                    display: flex;
+                    flex-flow: column nowrap;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="main-container">
+            <div class="mainContent">
+                <h1>Projectile Simulator </h1>
+                <h2 align="center"><strong>Just press the Start button below!</strong></h2>
+                <table class="container">
+                    <thead>
+                        <tr>
+                            <th>
+                                <h1>Attribute</h1>
+                            </th>
+                            <th>
+                                <h1>Value</h1>
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>position x (m)</td>
+                            <td id="p1">0</td>
+                        </tr>
+                        <tr>
+                            <td>position y (m)</td>
+                            <td id="p2">0</td>
+                        </tr>
+                        <tr>
+                            <td>time (s)</td>
+                            <td id="t">0</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="container">
+                    <div>
+                        <div class='input-fields'>
+                            <div class="form__group field">
+                                <input type="number" class="form__field" placeholder="Angle" name="angle" id='angle'
+                                    required value='45' min="0" max="90" />
+                                <label for="angle" class="form__label">Angle</label>
+                                <p class="error-input">Angle must be between 1 and 90</p>
+
+                            </div>
+                            <div class="form__group field" style="margin-right: 0;">
+                                <input type="number" class="form__field" placeholder="Velocity" name="velocity"
+                                    id='velocity' value='25' required max="300" />
+                                <label for="velocity" class="form__label">Velocity</label>
+                                <p class="error-input">Velocity must be between 1 and 300</p>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="button" onclick="startButton()" id='start'>Start</button>
+                            <button class="button" onclick="resetButton()" id='reset'>Reset</button>
+                        </div>
+                        <div>
+                            <button class="button" onclick="pauseButton()" disabled id='pause'>Pause</button>
+                            <button class="button" onclick="continueButton()" disabled id='continue'>Continue</button>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+        <div class="container2">
+            <canvas id="canvas"></canvas>
+            <canvas id="canvas2"></canvas>
+            <canvas id="canvas3"></canvas>
+            <canvas id="canvas4"></canvas>
+            <canvas id="canvas5"></canvas>
+
+        </div>
+
+        <script>
+            // Define canvases and set their width and height to fit different screen sizes.
+
+            // canvas of ball
+            let canvas = document.getElementById("canvas");
+            let context = canvas.getContext("2d");
+            canvas.setAttribute(
+                "width",
+                window.innerWidth <= 1024 ? window.innerWidth : window.innerWidth * 0.7
+            );
+            canvas.setAttribute(
+                "height",
+                window.innerWidth <= 1024 ? window.innerHeight / 2 : window.innerHeight
+            );
+
+            // canvas of curve
+            let canvas2 = document.getElementById("canvas2");
+            let context2 = canvas2.getContext("2d");
+            canvas2.setAttribute(
+                "width",
+                window.innerWidth <= 1024 ? window.innerWidth : window.innerWidth * 0.7
+            );
+            canvas2.setAttribute(
+                "height",
+                window.innerWidth <= 1024 ? window.innerHeight / 2 : window.innerHeight
+            );
+
+            // canvas of graph
+            let canvas3 = document.getElementById("canvas3");
+            let context3 = canvas3.getContext("2d");
+            canvas3.setAttribute(
+                "width",
+                window.innerWidth <= 1024 ? window.innerWidth : window.innerWidth * 0.7
+            );
+            canvas3.setAttribute(
+                "height",
+                window.innerWidth <= 1024 ? window.innerHeight / 2 : window.innerHeight
+            );
+
+            // canvas of left max height line
+            let canvas4 = document.getElementById("canvas4");
+            let context4 = canvas4.getContext("2d");
+            canvas4.setAttribute(
+                "width",
+                window.innerWidth <= 1024 ? window.innerWidth : window.innerWidth * 0.7
+            );
+            canvas4.setAttribute(
+                "height",
+                window.innerWidth <= 1024 ? window.innerHeight / 2 : window.innerHeight
+            );
+
+            // canvas of right max height line
+            let canvas5 = document.getElementById("canvas5");
+            let context5 = canvas4.getContext("2d");
+            canvas5.setAttribute(
+                "width",
+                window.innerWidth <= 1024 ? window.innerWidth : window.innerWidth * 0.7
+            );
+            canvas5.setAttribute(
+                "height",
+                window.innerWidth <= 1024 ? window.innerHeight / 2 : window.innerHeight
+            );
+
+            let xmin,
+                xmax,
+                ymin,
+                ymax,
+                xorig,
+                yorig,
+                xwidth,
+                ywidth,
+                xscal,
+                yscal;
+
+            let ball,
+                animId,
+                animId2,
+                animId3;
+
+            let t,
+                i,
+                b,
+                t0,
+                dt,
+                second_t,
+                second_t0,
+                second_dt,
+                third_t,
+                third_t0,
+                third_dt;
+
+            let yA;
+            let angle, velocity;
+            let max_height;
+            let max_distance;
+            let paused;
+            let flag;
+            let max_old_x;
+            let max_old_x2;
+            let max_old_y;
+
+            let animTime = 60; // duration of animation
+
+            // entry point from start button
+            function init() {
+                //reset variables
+                yA = 0;
+                flag = false;
+                paused = false;
+                t0 = new Date().getTime();
+                t = 0;
+                b = 0;
+
+                // Set graph Values based on angle and velocity to be more than max distance covered and max height reached
+                angle = document.getElementById("angle").value;
+                angle = (angle * Math.PI) / 180;
+                velocity = document.getElementById("velocity").value;
+
+                max_height = Math.pow(velocity * Math.abs(Math.sin(angle)), 2) / (2 * 9.81);
+                max_distance = (Math.pow(velocity, 2) * Math.abs(Math.sin(2 * angle))) / 9.81;
+
+                xmin = 0;
+                ymin = 0;
+                getGraphMaxs();
+
+                xorig = 40;
+                yorig =
+                    window.innerWidth <= 1024 ?
+                    (window.innerHeight * 2) / 5 :
+                    (window.innerHeight * 4) / 5;
+
+                xwidth = window.innerWidth <= 1024 ? canvas.width * 0.75 : canvas.width * 0.9;
+                ywidth = canvas.height * 0.7;
+
+                //draw balls
+                if (window.innerWidth > 1500) {
+                    ball = new Ball(10, "#FB667A", 1, false);
+                    ball[1] = new Ball(2, "#4DC3FA", 1, false);
+                } else {
+                    ball = new Ball(7, "#FB667A", 1, false);
+                    ball[1] = new Ball(1.5, "#4DC3FA", 1, false);
+                }
+
+                ball.pos2D = new Vector2D(xorig, yorig);
+                ball[1].pos2D = new Vector2D(xorig, yorig);
+
+                ball.draw(context);
+                ball[1].draw(context2);
+
+                // plot rhe graph
+                plotGraph();
+
+                // start the animation
+                animFrame();
+            }
+
+            // set xmax and ymax of graph
+            function getGraphMaxs() {
+                xmax = digitCount(max_distance);
+                if (xmax === 0) {
+                    xmax = 10;
+                } else {
+                    xmax = Math.pow(10, xmax);
+                }
+
+                ymax = digitCount(max_height);
+                if (ymax === 0) {
+                    ymax = 10;
+                } else {
+                    ymax = Math.pow(10, ymax);
+                }
+            }
+
+            // counts number of digits in number to know in what range we need to draw
+            function digitCount(num) {
+                num = Math.floor(num);
+                if (num === 0) return 0;
+                return Math.floor(Math.log10(Math.abs(num))) + 1;
+            }
+
+            function plotGraph() {
+                let graph = new Graph(
+                    context3,
+                    xmin,
+                    xmax,
+                    ymin,
+                    ymax,
+                    xorig,
+                    yorig,
+                    xwidth,
+                    ywidth
+                );
+                graph.drawgrid(xmax / 10, xmax / 100, ymax / 10, ymax / 100);
+                graph.drawaxes("x (m)", "y (m)");
+                xscal = (xmax - xmin) / xwidth;
+                yscal = (ymax - ymin) / ywidth;
+            }
+
+            // animation of ball and the curve from origin
+            function animFrame() {
+                if (paused) {
+                    return;
+                }
+                animId = requestAnimationFrame(animFrame, canvas);
+                onTimer();
+            }
+
+            function onTimer() {
+                let t1 = new Date().getTime();
+                dt = 0.001 * (t1 - t0);
+                t0 = t1;
+                t += dt;
+                rounded_time = Math.round(10 * t) / 10;
+
+                if (t >= animTime) {
+                    stop();
+                } else {
+                    if (yA >= 0) {
+                        move();
+                    } else {
+                        stop();
+                    }
+                }
+            }
+
+            // Finish the animation
+            function stop() {
+                cancelAnimationFrame(animId);
+                animId = null;
+                document.getElementById("start").removeAttribute("disabled");
+                document.getElementById("pause").setAttribute("disabled", true);
+                document.getElementById("continue").setAttribute("disabled", true);
+            }
+
+            function move() {
+                let old_x = ball.pos2D.x;
+                let old_y = ball.pos2D.y;
+
+                let new_x = velocity * Math.abs(Math.cos(angle)) * t;
+                ball.pos2D = ball.pos2D.addScaled(new_x);
+                ball[1].pos2D = ball[1].pos2D.addScaled(new_x);
+
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                ball.draw(context);
+                ball[1].draw(context2);
+
+                // draw the max height red line
+                if (old_y < ball.pos2D.y && !flag) {
+                    flag = true;
+                    drawMaxHeight(old_x, old_y);
+                }
+
+                document.getElementById("p1").innerHTML = Math.round(new_x);
+                document.getElementById("p2").innerHTML = Math.round(equation(new_x));
+                if (rounded_time === 60) {
+                    document.getElementById("t").innerHTML = rounded_time + " Max";
+                } else {
+                    document.getElementById("t").innerHTML = rounded_time;
+                }
+                yA = Math.floor(equation(new_x));
+            }
+
+            // projectile motion equation
+            function equation(current_x) {
+                return (
+                    Math.abs(Math.tan(angle)) * current_x -
+                    (9.81 * Math.pow(current_x, 2)) /
+                    (2 * Math.pow(velocity * Math.abs(Math.cos(angle)), 2))
+                );
+            }
+
+            function drawMaxHeight(old_x, old_y) {
+                max_old_y = old_y;
+
+                // draw left red line
+                max_old_x = old_x;
+                second_t0 = new Date().getTime();
+                let ctx = context4;
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(max_old_x, old_y);
+                animFrameMax();
+
+                // draw right red line
+                max_old_x2 = old_x;
+                third_t0 = new Date().getTime();
+                let ctx2 = context5;
+                ctx2.strokeStyle = "red";
+                ctx2.lineWidth = 1;
+                ctx2.beginPath();
+                ctx2.moveTo(max_old_x2, old_y);
+                animFrameMax2();
+
+                // draw text over line
+                ctx.font = "12pt Comic Sans MS";
+                ctx.fillStyle = "#1F2739";
+                ctx.textAlign = "left";
+                ctx.textBaseline = "top";
+                let max_Y = -Math.round((old_y - yorig) * yscal);
+                ctx.fillText(
+                    max_Y + `${max_Y >= 1000 ? " km" : " meters"}`,
+                    old_x,
+                    old_y - 20
+                );
+            }
+
+            function animFrameMax() {
+                animId2 = requestAnimationFrame(animFrameMax, canvas4);
+                onTimerMax();
+            }
+
+            function onTimerMax() {
+                let ctx = context4;
+                let second_t1 = new Date().getTime();
+                second_dt = 0.001 * (second_t1 - second_t0);
+                second_t0 = second_t1;
+
+                if (max_old_x >= xorig) {
+                    drawLine();
+                } else {
+                    cancelAnimationFrame(animId2);
+                    ctx.closePath();
+                }
+            }
+
+            function drawLine() {
+                max_old_x -= 3;
+                let ctx = context4;
+                ctx.lineTo(max_old_x, max_old_y);
+                ctx.stroke();
+            }
+
+            function animFrameMax2() {
+                animId3 = requestAnimationFrame(animFrameMax2, canvas5);
+                onTimerMax2();
+            }
+
+            function onTimerMax2() {
+                let ctx = context5;
+                let third_t1 = new Date().getTime();
+                third_dt = 0.001 * (third_t1 - third_t0);
+                third_t0 = third_t1;
+
+                let specific_x_max_rel = xmax / xscal;
+                let specific_x_max = specific_x_max_rel + xorig;
+
+                if (max_old_x2 <= specific_x_max) {
+                    drawLine2();
+                } else {
+                    cancelAnimationFrame(animId3);
+                    ctx.closePath();
+                }
+            }
+
+            function drawLine2() {
+                max_old_x2 += 3;
+                let ctx = context5;
+                ctx.lineTo(max_old_x2, max_old_y);
+                ctx.stroke();
+            }
+
+
+            // Buttons
+
+            // Start point
+            function startButton() {
+                // Input error handling
+                let angle_input = document.getElementById("angle").checkValidity();
+                let velocity_input = document.getElementById("velocity").checkValidity();
+                if (!angle_input || !velocity_input) {
+                    if (!velocity_input) {
+                        document.getElementById("velocity").focus();
+                    }
+                    if (!angle_input) {
+                        document.getElementById("angle").focus();
+                    }
+                    return 0;
+                }
+
+                cancelAnimationFrame(animId2);
+                cancelAnimationFrame(animId3);
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context2.clearRect(0, 0, canvas.width, canvas.height);
+                context3.clearRect(0, 0, canvas.width, canvas.height);
+                context4.clearRect(0, 0, canvas.width, canvas.height);
+                context5.clearRect(0, 0, canvas.width, canvas.height);
+                document.getElementById("start").setAttribute("disabled", true);
+                document.getElementById("pause").removeAttribute("disabled");
+                init();
+            }
+
+            // Pause the projectile animation
+            function pauseButton() {
+                document.getElementById("pause").setAttribute("disabled", true);
+                document.getElementById("continue").removeAttribute("disabled");
+                paused = true;
+            }
+
+            // Continue the projectile animation
+            function continueButton() {
+                document.getElementById("pause").removeAttribute("disabled");
+                document.getElementById("continue").setAttribute("disabled", true);
+                t0 = new Date().getTime();
+                paused = false;
+                animFrame();
+            }
+
+            // Reset everything (input values, graph, clear the whole canvas)
+            function resetButton() {
+                if (animId) {
+                    stop();
+                }
+                cancelAnimationFrame(animId2);
+                cancelAnimationFrame(animId3);
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context2.clearRect(0, 0, canvas.width, canvas.height);
+                context3.clearRect(0, 0, canvas.width, canvas.height);
+                context4.clearRect(0, 0, canvas.width, canvas.height);
+                context5.clearRect(0, 0, canvas.width, canvas.height);
+                document.getElementById("angle").value = 45;
+                document.getElementById("velocity").value = 25;
+                document.getElementById("start").removeAttribute("disabled");
+                document.getElementById("pause").setAttribute("disabled", true);
+                document.getElementById("continue").setAttribute("disabled", true);
+            }
+
+
+            // Vector2D class
+            function Vector2D(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            Vector2D.prototype = {
+                addScaled: function (x) {
+                    let scaled_x = x / xscal + xorig;
+                    let scaled_y = +yorig - equation(x) / yscal;
+                    return new Vector2D(scaled_x, scaled_y);
+                },
+            };
+
+
+            // Ball class
+            function Ball(radius, color, mass, gradient) {
+                if (typeof radius === "undefined") radius = 10;
+                if (typeof color === "undefined") color = "#0000ff";
+                if (typeof mass === "undefined") mass = 1;
+                if (typeof gradient === "undefined") gradient = false;
+                this.radius = radius;
+                this.color = color;
+                this.mass = mass;
+                this.gradient = gradient;
+                this.x = 0;
+                this.y = 0;
+            }
+
+            Ball.prototype = {
+                get pos2D() {
+                    return new Vector2D(this.x, this.y);
+                },
+                set pos2D(pos) {
+                    this.x = pos.x;
+                    this.y = pos.y;
+                },
+                draw: function (context) {
+                    if (this.gradient) {
+                        grad = context.createRadialGradient(
+                            this.x,
+                            this.y,
+                            0,
+                            this.x,
+                            this.y,
+                            this.radius
+                        );
+                        grad.addColorStop(0, "#ffffff");
+                        grad.addColorStop(1, this.color);
+                        context.fillStyle = grad;
+                    } else {
+                        context.fillStyle = this.color;
+                    }
+                    context.beginPath();
+                    context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
+                    context.closePath();
+                    context.fill();
+                },
+            };
+
+
+            // Graph class
+            function Graph(context, xmin, xmax, ymin, ymax, x0, y0, xwidth, ywidth) {
+                let ctx = context;
+
+                let x_orig;
+                let y_orig;
+
+                let x_min_rel;
+                let x_max_rel;
+                let y_min_rel;
+                let y_max_rel;
+
+                let x_tick_major;
+                let x_tick_minor;
+                let y_tick_major;
+                let y_tick_minor;
+
+                let x_displ_scal;
+                let y_displ_scal;
+
+                let x_min;
+                let x_max;
+                let y_min;
+                let y_max;
+                let xx;
+                let yy;
+                let x_displ;
+                let y_displ;
+                let txpos;
+                let typos;
+
+                let tw = 15;
+                let th = 20;
+
+                x_orig = x0;
+                y_orig = y0;
+
+                x_displ_scal = (xmax - xmin) / xwidth;
+                y_displ_scal = (ymax - ymin) / ywidth;
+
+                x_min_rel = xmin / x_displ_scal;
+                x_max_rel = xmax / x_displ_scal;
+                y_min_rel = ymin / y_displ_scal;
+                y_max_rel = ymax / y_displ_scal;
+
+                x_min = x_min_rel + x_orig;
+                x_max = x_max_rel + x_orig;
+                y_min = y_orig - y_min_rel;
+                y_max = y_orig - y_max_rel;
+                txpos = x_orig - tw;
+                typos = y_orig;
+
+                this.drawgrid = function (xmajor, xminor, ymajor, yminor) {
+                    x_tick_major = xmajor / x_displ_scal;
+                    x_tick_minor = xminor / x_displ_scal;
+                    y_tick_major = ymajor / y_displ_scal;
+                    y_tick_minor = yminor / y_displ_scal;
+
+                    // draw major grid lines
+                    ctx.strokeStyle = "#999999";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    yy = y_max;
+
+                    do {
+                        ctx.moveTo(x_min, yy);
+                        ctx.lineTo(x_max, yy);
+                        yy += y_tick_major;
+                    } while (yy <= y_min);
+                    xx = x_min;
+                    do {
+                        ctx.moveTo(xx, y_min);
+                        ctx.lineTo(xx, y_max);
+                        xx += x_tick_major;
+                    } while (xx <= x_max);
+                    ctx.stroke();
+
+                    // draw minor grid lines
+                    ctx.strokeStyle = "#cccccc";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    yy = y_max;
+                    do {
+                        ctx.moveTo(x_min, yy);
+                        ctx.lineTo(x_max, yy);
+                        yy += y_tick_minor;
+                    } while (yy <= y_min);
+                    xx = x_min;
+                    do {
+                        ctx.moveTo(xx, y_min);
+                        ctx.lineTo(xx, y_max);
+                        xx += x_tick_minor;
+                    } while (xx <= x_max);
+                    ctx.stroke();
+
+                    //display values
+                    ctx.font = "12pt Comic Sans MS";
+                    ctx.fillStyle = "#000000";
+                    ctx.textAlign = "right";
+                    ctx.textBaseline = "top";
+                    yy = y_max;
+                    do {
+                        y_displ = Math.round((y_orig - yy) * y_displ_scal);
+                        ctx.fillText(
+                            y_displ >= 1000 ? y_displ / 1000 + "k" : y_displ,
+                            txpos + 5,
+                            yy - th / 2
+                        );
+                        yy += y_tick_major;
+                    } while (yy <= y_min);
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "top";
+                    xx = x_min;
+                    do {
+                        x_displ = Math.round((xx - x_orig) * x_displ_scal);
+                        ctx.fillText(
+                            x_displ >= 1000 ? x_displ / 1000 + "k" : x_displ,
+                            xx - tw + 10,
+                            typos + 5
+                        );
+                        xx += x_tick_major;
+                        console.log(xx);
+                        console.log(x_max);
+                    } while (Math.floor(xx) <= x_max);
+                };
+
+                this.drawaxes = function (xlabel, ylabel) {
+                    if (typeof xlabel === "undefined") xlabel = "x";
+                    if (typeof ylabel === "undefined") ylabel = "y";
+                    ctx.strokeStyle = "#000000";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x_min, y_orig);
+                    ctx.lineTo(x_max, y_orig);
+                    ctx.moveTo(x_orig, y_min);
+                    ctx.lineTo(x_orig, y_max);
+                    ctx.stroke();
+
+                    ctx.font = "12pt Arial";
+                    ctx.fillStyle = "#000000";
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "top";
+                    ctx.fillText(xlabel, x_max + 0.75 * tw, typos - th / 2);
+                    ctx.fillText(ylabel, txpos + tw / 2 + 5, y_max - 1.5 * th);
+                };
+            }
+        </script>
+    </body>
+</html>
